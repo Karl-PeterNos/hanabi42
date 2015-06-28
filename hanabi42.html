@@ -1,0 +1,124 @@
+<template name="hanabiLayout">
+
+  <header>
+    <title>hanabi42</title>
+  </header>
+  <div class="container">
+    {{>yield}}
+  </div >
+
+</template>
+
+<template name="login">
+  {{> loginButtons}}
+</template>
+
+<template name="uebersicht">
+
+  <a class="waves-effect waves-light btn-large" id="neuesSpiel">Neues Spiel</a>
+
+  <ul class="collection with-header">
+    <li class="collection-header"><h4>Laufende Spiele</h4></li>
+    {{#each spiel}}
+      <li class="collection-item"><div>{{nummer}}, {{status}}<a href="{{pathFor route='spiel.show' }}" class="secondary-content"><i class="mdi-content-send" id="spielBeitreten"></i></a></div></li>
+    {{/each}}
+  </ul>
+
+</template>
+
+<template name="spiel">
+
+  {{#if gameOver}}
+    <div id="modal1" class="modal">
+      <div class="modal-content">
+        <h4>SpielEn.De</h4>
+        <p>{{status}}</p>
+      </div>
+      <div class="modal-footer">
+        <a href="{{pathFor route='uebersicht' }}" class=" modal-action modal-close waves-effect waves-green btn-flat">done</a>
+      </div>
+    </div>
+  {{else}}
+    {{#if isStarted}}
+      {{> tisch}}
+      {{#each mitSpieler}}
+        {{> spieler}}
+      {{/each}}
+    {{else}}
+      <a class="waves-effect waves-light btn-large" id="starten">Starten</a>
+      <a class="waves-effect waves-light btn-large" id="mitspielen">Mitspielen</a>
+      <ul class="collection with-header">
+        <li class="collection-header"><h4>Mitspieler</h4></li>
+        {{#each mitSpieler}}
+          <li class="collection-item"><div>{{name}}</div></li>
+        {{/each}}
+      </ul>
+    {{/if}}
+  {{/if}}
+</template>
+
+<template name="spieler">
+  <div class="row">
+    <div class="col l12">
+      {{name}}
+    </div>
+  </div>
+  <div class="row">
+      {{#each karte}}
+        <div class="col s12 m6 l2">
+          <div class="card {{farbAttr}}">
+            {{#if isMitSpieler}}
+              <span class="card-title">
+                  <p>{{zahl}}</p>
+              </span>
+            {{/if}}
+            <div class="card-content">
+              {{#each kartenInfo}}
+                <p>{{info}}</p>
+              {{/each}}
+            </div>
+            <div class="card-action">
+            {{#if isMitSpieler}}
+              <a class="waves-effect waves-light btn-large" id="farbTipp">Hinweis: {{farbe}}</a>
+              <a class="waves-effect waves-light btn-large" id="zahlTipp">Hinweis: {{zahl}}</a>
+            {{else}}
+              <a class="waves-effect waves-light btn-large" id="spielen">Spielen</a>
+              <a class="waves-effect waves-light btn-large" id="abwerfen">Abwerfen</a>
+            {{/if}}
+            </div>
+          </div>
+        </div>
+      {{/each}}
+  </div>
+</template>
+
+<template name="tisch">
+  <div class="row">
+    <div class="col s12 m6 l2">
+      <div class="card blue-grey darken-1">
+        <div class="card-content white-text">
+          <span class="card-title"><i class="material-icons">hourglass_empty</i>{{stapelHoehe}}</span>
+          <span class="card-title"><i class="material-icons">question_answer</i>{{verbleibendeTipps}}</span>
+          <span class="card-title"><i class="material-icons">error</i>{{gewitter}}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+  {{> tischKarten ortId="AUSLAGEID"}}
+  {{> tischKarten ortId="ABLAGEID"}}
+</template>
+
+<template name="tischKarten">
+    <div class="row">
+      {{#each karte ortId=ortId}}
+        {{#if newFarbe}}</div><div class="row">{{/if}}
+        <div class="col s12 m6 l2">
+          <div class="card {{farbAttr}}">
+            <span class="card-title">
+                <p>{{zahl}}</p>
+            </span>
+          </div>
+        </div>
+      {{/each}}
+    </div>
+</template>
