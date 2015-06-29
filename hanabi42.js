@@ -17,10 +17,16 @@ Router.route('/', function () {
   this.render('uebersicht');
 });
 
-
+Router.route('/uebersicht', function () {
+  this.layout('hanabiLayout');
+  this.render('uebersicht');
+},{
+  name: 'uebersicht'
+});
 Router.route('/spiel/:_id', function () {
   var einSpiel = spiel.findOne({_id: this.params._id});
   this.layout('hanabiLayout');
+
   this.render('spiel', {data: einSpiel});
 },{
   name: 'spiel.show'
@@ -31,43 +37,44 @@ mitSpieler = new Mongo.Collection('mitSpieler');
 karte = new Mongo.Collection('karte');
 kartenInfo = new Mongo.Collection('kartenInfo');
 
-const: stapelId = "STAPELID";
-const: ablageId = "ABLAGEID";
-const: auslageId = "AUSLAGEID";
+const stapelId = "STAPELID";
+const ablageId = "ABLAGEID";
+const auslageId = "AUSLAGEID";
 
-var:   kartenVorrat = {{zahl:1,farbe:blau},{zahl:1,farbe:gelb},{zahl:1,farbe:gruen},{zahl:1,farbe:rot},{zahl:1,farbe:weiss}
-                      ,{zahl:1,farbe:blau},{zahl:1,farbe:gelb},{zahl:1,farbe:gruen},{zahl:1,farbe:rot},{zahl:1,farbe:weiss}
-                      ,{zahl:1,farbe:blau},{zahl:1,farbe:gelb},{zahl:1,farbe:gruen},{zahl:1,farbe:rot},{zahl:1,farbe:weiss}
-                      ,{zahl:2,farbe:blau},{zahl:2,farbe:gelb},{zahl:2,farbe:gruen},{zahl:2,farbe:rot},{zahl:2,farbe:weiss}
-                      ,{zahl:2,farbe:blau},{zahl:2,farbe:gelb},{zahl:2,farbe:gruen},{zahl:2,farbe:rot},{zahl:2,farbe:weiss}
-                      ,{zahl:3,farbe:blau},{zahl:3,farbe:gelb},{zahl:3,farbe:gruen},{zahl:3,farbe:rot},{zahl:3,farbe:weiss}
-                      ,{zahl:3,farbe:blau},{zahl:3,farbe:gelb},{zahl:3,farbe:gruen},{zahl:3,farbe:rot},{zahl:3,farbe:weiss}
-                      ,{zahl:4,farbe:blau},{zahl:4,farbe:gelb},{zahl:4,farbe:gruen},{zahl:4,farbe:rot},{zahl:4,farbe:weiss}
-                      ,{zahl:4,farbe:blau},{zahl:4,farbe:gelb},{zahl:4,farbe:gruen},{zahl:4,farbe:rot},{zahl:4,farbe:weiss}
-                      ,{zahl:5,farbe:blau},{zahl:5,farbe:gelb},{zahl:5,farbe:gruen},{zahl:5,farbe:rot},{zahl:5,farbe:weiss}
-                      };
+var kartenVorrat = new Array
+                      ({zahl:1,farbe:"blau"},{zahl:1,farbe:"gelb"},{zahl:1,farbe:"gruen"},{zahl:1,farbe:"rot"},{zahl:1,farbe:"weiss"}
+                      ,{zahl:1,farbe:"blau"},{zahl:1,farbe:"gelb"},{zahl:1,farbe:"gruen"},{zahl:1,farbe:"rot"},{zahl:1,farbe:"weiss"}
+                      ,{zahl:1,farbe:"blau"},{zahl:1,farbe:"gelb"},{zahl:1,farbe:"gruen"},{zahl:1,farbe:"rot"},{zahl:1,farbe:"weiss"}
+                      ,{zahl:2,farbe:"blau"},{zahl:2,farbe:"gelb"},{zahl:2,farbe:"gruen"},{zahl:2,farbe:"rot"},{zahl:2,farbe:"weiss"}
+                      ,{zahl:2,farbe:"blau"},{zahl:2,farbe:"gelb"},{zahl:2,farbe:"gruen"},{zahl:2,farbe:"rot"},{zahl:2,farbe:"weiss"}
+                      ,{zahl:3,farbe:"blau"},{zahl:3,farbe:"gelb"},{zahl:3,farbe:"gruen"},{zahl:3,farbe:"rot"},{zahl:3,farbe:"weiss"}
+                      ,{zahl:3,farbe:"blau"},{zahl:3,farbe:"gelb"},{zahl:3,farbe:"gruen"},{zahl:3,farbe:"rot"},{zahl:3,farbe:"weiss"}
+                      ,{zahl:4,farbe:"blau"},{zahl:4,farbe:"gelb"},{zahl:4,farbe:"gruen"},{zahl:4,farbe:"rot"},{zahl:4,farbe:"weiss"}
+                      ,{zahl:4,farbe:"blau"},{zahl:4,farbe:"gelb"},{zahl:4,farbe:"gruen"},{zahl:4,farbe:"rot"},{zahl:4,farbe:"weiss"}
+                      ,{zahl:5,farbe:"blau"},{zahl:5,farbe:"gelb"},{zahl:5,farbe:"gruen"},{zahl:5,farbe:"rot"},{zahl:5,farbe:"weiss"}
+                      );
 
 if (Meteor.isClient) {
 
   function farbAttr(farbe){
-      if(farbe="blau")
-        return "blue-accent-4";
-      if(farbe="gelb")
-        return "yellow-accent-2";
-      if(farbe="gruen")
-        return "green-accent-4";
-      if(farbe="rot")
-        return "red-accent-2";
-      if(farbe="weiss")
-        return "blue-grey-lighten-5";
+      if(farbe=="blau")
+        return "blue accent-4 black-text";
+      if(farbe=="gelb")
+        return "yellow accent-2 black-text";
+      if(farbe=="gruen")
+        return "green accent-4 black-text";
+      if(farbe=="rot")
+        return "red accent-2 black-text";
+      if(farbe=="weiss")
+        return "blue-grey lighten-5 black-text";
   };
 
   function gameOver(spielId){
 
     if(karte.find({spielId:spielId,ortId:auslageId,zahl:5}).count() == 5){
-      spiel.update(spielId,$set:{status:"gewonnen"});
+      spiel.update(spielId,{$set:{status:"gewonnen"}});
     }else{
-      spiel.update(spielId,$set:{status:"verloren"});
+      spiel.update(spielId,{$set:{status:"verloren"}});
     }
 
   };
@@ -76,12 +83,12 @@ if (Meteor.isClient) {
     if(karte.find({spielId:spielId,ortId:stapelId}).count()==0)
       return;
     var nachZiehKarteId = karte.findOne({spielId:spielId,ortId:stapelId},{sort: {position:1}})._id;
-    karte.update(nachZiehKarteId,$set:{ort:aktivId});
+    karte.update(nachZiehKarteId,{$set:{ortId:spiel.findOne(spielId).aktivId}});
   }
 
 
   function nextSpieler(spielId){
-    var nextPosition = mitSpieler.findOne(spiel.findOne(spielId).aktivId).position + 1;
+    var nextPosition = mitSpieler.findOne({spielerId:spiel.findOne(spielId).aktivId}).position + 1;
     if(karte.find({spielId:spielId,ortId:stapelId}).count()==0){
       spiel.update(spielId,{$inc:{letzteRunde:1}});
     }
@@ -91,7 +98,7 @@ if (Meteor.isClient) {
     };
     if(nextPosition==mitSpieler.find({spielId:spielId}).count())
       nextPosition = 0;
-    spiel.update(spielId;{$set:{aktivId:mitSpieler.findOne({spielId:spielId,position:nextPosition})}});
+    spiel.update(spielId,{$set:{aktivId:mitSpieler.findOne({spielId:spielId,position:nextPosition}).spielerId}});
   };
 
 
@@ -116,7 +123,7 @@ if (Meteor.isClient) {
        }
 
        for(i=0;i<50;i++){
-           karte.insert({spielId:spielId, position:i, zahl:kartenVorrat[i].zahl; farbe:kartenVorrat[i].farbe, ortId:stapelId,
+           karte.insert({spielId:spielId, position:i, zahl:kartenVorrat[i].zahl, farbe:kartenVorrat[i].farbe, ortId:stapelId,
                          farbAttr:farbAttr(kartenVorrat[i].farbe)});
        }
     }
@@ -124,17 +131,29 @@ if (Meteor.isClient) {
 
   Template.spiel.helpers({
     isStarted: function(){
+      Session.set("spielId",this._id);
       return (this.status != "neu");
     },
+    gameOver: function(){
+
+      Session.set("spielId",this._id);
+      if(this.status=="verloren")
+        return true;
+      if(this.status=="gewonnen")
+        return true;
+      return false;
+
+    },
     mitSpieler: function(){
+      Session.set("spielId",this._id);
       return mitSpieler.find({spielId:this._id});
-    }
+    },
   });
 
   Template.spiel.events({
     "click #starten": function(){
       if(mitSpieler.find({spielId:this._id}).count() > 1){
-        spiel.update({_id: this._id},{$set:{status:"gestartet", aktivId:mitSpieler.findOne({spielId:this._id})._id }});
+        spiel.update(this._id,{$set:{status:"gestartet", aktivId:mitSpieler.findOne({spielId:this._id}).spielerId }});
 
         var kartenLimit = 5;
         if(mitSpieler.find({spielId:this._id}).count() > 3)
@@ -146,7 +165,7 @@ if (Meteor.isClient) {
           mitSpieler.update(spieler._id,{$set:{position:spielerPosition}});
           spielerPosition++;
           for(i=0;i<kartenLimit;i++){
-            karte.update({spielId:spieler.spielId, position:kartenPosition},{$set:{ortId:spieler._id}});
+            karte.update(karte.findOne({spielId:spieler.spielId, position:kartenPosition})._id,{$set:{ortId:spieler.spielerId}});
             kartenPosition++;
           }
         });
@@ -167,11 +186,16 @@ if (Meteor.isClient) {
     karte: function(){
       return karte.find({spielId:this.spielId, ortId:this.spielerId},{sort: {position:1}});
     },
-    isMitSpieler: function({
-      if( this.ortId != spiel.findOne({spielId:this.spielId}).aktivId )
+    isMitSpieler: function(){
+      if( this.ortId != Meteor.userId() )
         return true;
-    }),
-    kartenInfo: function()
+    },
+    isAktiv: function(){
+      if( Meteor.userId() == spiel.findOne(this.spielId).aktivId )
+        return true;
+    },
+
+    kartenInfo: function(){
       return kartenInfo.find({karteId:this._id});
     }
   });
@@ -180,20 +204,23 @@ if (Meteor.isClient) {
     "click #farbTipp": function(){
       var farbe = this.farbe;
       if(spiel.findOne(this.spielId).verbleibendeTipps>0){
-        karte.find({spielId:this.spielId,ortId:this.spielerId,farbe:farbe}).forEach(function(handKarte){
+        karte.find({spielId:this.spielId,ortId:this.ortId,farbe:farbe}).forEach(function(handKarte){
+          if(kartenInfo.find({karteId:handKarte._id,info:farbe}).count()==0)
             kartenInfo.insert({karteId:handKarte._id,info:farbe});
         });
-        spiel.update({_id:this.spielId}, {$inc:{verbleibendeTipps:-1}});
+        spiel.update(this.spielId, {$inc:{verbleibendeTipps:-1}});
         nextSpieler(this.spielId);
       }
     },
     "click #zahlTipp": function(){
       var zahl = this.zahl;
       if(spiel.findOne(this.spielId).verbleibendeTipps>0){
-        karte.find({spielId:this.spielId,ortId:this.spielerId,zahl:zahl}).forEach(function(handKarte){
+        karte.find({spielId:this.spielId,ortId:this.ortId,zahl:zahl}).forEach(function(handKarte){
+          if(kartenInfo.find({karteId:handKarte._id,info:zahl}).count()==0)
             kartenInfo.insert({karteId:handKarte._id,info:zahl});
         });
-        spiel.update({_id:this.spielId}, {$inc:{verbleibendeTipps:-1}});
+
+        spiel.update(this.spielId, {$inc:{verbleibendeTipps:-1}});
         nextSpieler(this.spielId);
       }
     },
@@ -209,21 +236,21 @@ if (Meteor.isClient) {
         ok=false;
 
       if(ok){
-        karte.update(this._id,{$set:{ortId:auslageId}};
+        karte.update(this._id,{$set:{ortId:auslageId}});
         if(zahl==5)
           if(spiel.findOne(this.spielId).verbleibendeTipps<8)
             spiel.update(this.spielId,{$inc:{verbleibendeTipps:1}});
       }else {
-        karte.update(this._id,{$set:{ortId:ablageId}};
+        karte.update(this._id,{$set:{ortId:ablageId}});
         spiel.update(this.spielId,{$inc:{gewitter:1}});
         if(spiel.findOne(this.spielId).gewitter>2)
-          gameOver(spielId);
+          gameOver(this.spielId);
       }
       nachZiehen(this.spielId);
       nextSpieler(this.spielId);
     },
     "click #abwerfen": function() {
-      karte.update(this._id,{$set:{ortId:ablageId}};
+      karte.update(this._id,{$set:{ortId:ablageId}});
       if(spiel.findOne(this.spielId).verbleibendeTipps<8)
         spiel.update(this.spielId,{$inc:{verbleibendeTipps:1}});
       nachZiehen(this.spielId);
@@ -232,21 +259,32 @@ if (Meteor.isClient) {
 
   });
 
-
-  var lastFarbe = "";
   Template.tisch.helpers({
     stapelHoehe: function(){
       return karte.find({spielId:this._id, ortId:stapelId}).count()
-    },
-    karte: function(ortId){
-      return karte.find(spielId:this._id,ortId:ortId,{sort: {farbe: 1, zahl:1}});
+    }
+  });
+
+  var lastFarbe = "";
+  var lastFarbe2 = "";
+  Template.tischKarten.helpers({
+    karte: function(){
+      var spielId = Session.get("spielId");
+      return karte.find({spielId:spielId,ortId:this.ortId},{sort: {farbe: 1, zahl:1}});
     },
     newFarbe: function(){
       if(this.farbe==lastFarbe)
         return false;
       lastFarbe = this.farbe;
       return true;
+    },
+    newFarbe2: function(){
+      if(this.farbe==lastFarbe2)
+        return false;
+      lastFarbe2 = this.farbe;
+      return true;
     }
+
   });
 
 }
